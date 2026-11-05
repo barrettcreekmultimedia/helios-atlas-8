@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050a14"><meta name="description" content="Helios Arena: local split-screen space combat in a destructible PlayCanvas solar system.">
+<title>HELIOS ARENA — Shattered Worlds</title>
+<script type="importmap">{"imports":{"playcanvas":"https://cdn.jsdelivr.net/npm/playcanvas@2.23.3/build/playcanvas.mjs"}}</script>
+<link rel="stylesheet" href="style.css">
+</head><body>
+<canvas id="application" aria-label="PlayCanvas split-screen space battle"></canvas>
+<div class="vignette"></div>
+<div id="match-view" hidden>
+ <header class="match-top"><div class="match-logo">✧ <b>HELIOS</b> <span>ARENA</span></div><div class="match-center"><i class="live-light"></i> <span id="round-state">SOLAR SYSTEM SKIRMISH</span> <small id="round-clock">00:00</small></div><div class="match-buttons"><button id="audio-toggle" title="Audio">♫ SOUND ON</button><button id="pause-btn" title="Pause game">Ⅱ PAUSE</button><button id="menu-btn" title="Return to menu">✕ EXIT</button></div></header>
+ <div class="split-divider" id="split-divider"><span>2 LOCAL PILOTS / ONE UNIVERSE</span></div>
+ <section class="player-hud top-hud" id="hud-p1">
+  <div class="player-heading"><span class="pilot-id">PILOT 01</span><strong id="p1-ship-name">VANGUARD</strong><span class="team-pill" id="p1-team">AZURE</span></div>
+  <div class="bars"><div class="bar"><span>HULL</span><div><i id="p1-hp" class="hp-fill"></i></div><b id="p1-hp-text">100</b></div><div class="bar"><span>SHIELD</span><div><i id="p1-shield" class="shield-fill"></i></div><b id="p1-shield-text">100</b></div></div>
+  <div class="pilot-readouts"><div><small>VELOCITY</small><strong id="p1-speed">0.0</strong></div><div><small>TARGET LOCK</small><strong id="p1-target">SCANNING</strong></div><div><small>PRIMARY</small><strong id="p1-primary">READY</strong></div><div><small>MISSILE</small><strong id="p1-missile">READY</strong></div><div><small>KILLS</small><strong id="p1-kills">00</strong></div></div>
+  <div class="pilot-actions"><button id="p1-mode" title="Switch between ship and world targets">TARGET: ENEMIES [T]</button><button id="p1-next">NEXT TARGET [TAB]</button><span id="p1-state">FLIGHT ACTIVE</span></div>
+  <div class="reticle reticle-p1"><i></i><b></b></div>
+  <div class="side-label left" id="p1-tip">WASD THRUST · MOUSE STEER · CLICK PULSE · RIGHT CLICK MISSILE</div>
+ </section>
+ <section class="player-hud bottom-hud" id="hud-p2">
+  <div class="player-heading"><span class="pilot-id">PILOT 02</span><strong id="p2-ship-name">SPECTRE</strong><span class="team-pill" id="p2-team">AZURE</span></div>
+  <div class="bars"><div class="bar"><span>HULL</span><div><i id="p2-hp" class="hp-fill"></i></div><b id="p2-hp-text">100</b></div><div class="bar"><span>SHIELD</span><div><i id="p2-shield" class="shield-fill"></i></div><b id="p2-shield-text">100</b></div></div>
+  <div class="pilot-readouts"><div><small>VELOCITY</small><strong id="p2-speed">0.0</strong></div><div><small>TARGET LOCK</small><strong id="p2-target">SCANNING</strong></div><div><small>PRIMARY</small><strong id="p2-primary">READY</strong></div><div><small>MISSILE</small><strong id="p2-missile">READY</strong></div><div><small>KILLS</small><strong id="p2-kills">00</strong></div></div>
+  <div class="pilot-actions"><button id="p2-mode">TARGET: ENEMIES [Y]</button><button id="p2-next">NEXT TARGET [ENTER]</button><span id="p2-state">FLIGHT ACTIVE</span></div>
+  <div class="reticle reticle-p2"><i></i><b></b></div><div class="side-label right" id="p2-tip">I/K THRUST · ARROWS STEER · N PULSE · M MISSILE · GAMEPAD SUPPORTED</div>
+ </section>
+ <div class="killfeed" id="killfeed" aria-live="polite"></div>
+ <div class="event-banner" id="event-banner" hidden><span id="event-kicker">WORLD EVENT</span><strong id="event-title">PLANET SHATTERED</strong><small id="event-detail">Debris field forming</small></div>
+ <div class="bottom-score"><span id="score-living">4 SHIPS IN PLAY</span><span id="score-planets">0 WORLDS DESTROYED</span><span id="score-mode">2 VS 2 • LAST TEAM STANDING</span></div>
+</div>
+<div class="menu-screen" id="lobby">
+ <div class="menu-ambience"></div>
+ <div class="lobby-content">
+  <div class="masthead"><div class="microcopy"><span class="pulse-dot"></span> LOCAL MULTIPLAYER · PLAYCANVAS ENGINE</div><h1>HELIOS <em>ARENA</em><span class="heading-dot">.</span></h1><p class="lobby-lead">SHATTERED WORLDS</p><p class="lobby-description">Two pilots. Four vessels. One destructible solar system. Fight between the planets, break asteroids into fragments, and turn entire worlds into deadly debris fields. The last team—or last pilot—standing wins.</p></div>
+  <div class="setup-grid">
+   <section class="setup-card"><div class="card-head"><small>01 / ENGAGEMENT</small><h2>BATTLE FORMAT</h2></div><div class="toggle-choices" id="mode-choices"><button class="choice active" data-mode="teams"><b>2 vs 2</b><small>Co-op pilots versus two enemy bots</small></button><button class="choice" data-mode="ffa"><b>FREE FOR ALL</b><small>Four ships. No allies.</small></button></div><div class="toggle-choices compact" id="human-choices"><button class="choice active" data-humans="2">2 LOCAL PLAYERS</button><button class="choice" data-humans="1">SOLO + BOTS</button></div><div class="field-label">STARTING BATTLE SECTOR</div><select id="arena-choice"><option value="earth">EARTH / INNER SYSTEM</option><option value="mars">MARS / RED FRONTIER</option><option value="ceres">ASTEROID BELT / CERES</option><option value="saturn">SATURN / RING EXPANSE</option><option value="jupiter">JUPITER / GIANT'S SHADOW</option></select><div class="field-label">BOT DIFFICULTY</div><select id="bot-choice"><option value="standard">STANDARD — AGGRESSIVE</option><option value="rookie">ROOKIE — RELAXED</option><option value="veteran">VETERAN — DEADLY</option></select></section>
+   <section class="setup-card hangar"><div class="card-head"><small>02 / HANGAR BAY</small><h2>CHOOSE YOUR VESSELS</h2></div><div class="pilot-select"><div class="pilot-selector"><span>PILOT 01</span><select id="ship-p1"><option value="fighter">VANGUARD / ASSAULT</option><option value="interceptor">SPECTRE / INTERCEPTOR</option><option value="dreadnought">TITAN / DREADNOUGHT</option></select></div><div class="pilot-selector" id="pilot2-selector"><span>PILOT 02</span><select id="ship-p2"><option value="interceptor">SPECTRE / INTERCEPTOR</option><option value="fighter">VANGUARD / ASSAULT</option><option value="dreadnought">TITAN / DREADNOUGHT</option></select></div></div><div id="ship-class-panel" class="class-preview"><span class="ship-glyph">◈</span><div><strong id="class-title">VANGUARD</strong><small id="class-specs">BALANCED // DEADLY</small><p id="class-description">Balanced thrusters and reinforced armour. Twin pulse cannons and target-seeking missiles.</p></div></div><div class="stat-tracks"><div><span>THRUST</span><i id="stat-thrust"></i></div><div><span>ARMOUR</span><i id="stat-armour"></i></div><div><span>WEAPONS</span><i id="stat-weapons"></i></div></div></section>
+   <section class="setup-card briefing"><div class="card-head"><small>03 / MISSION INTEL</small><h2>THE RULES OF SPACE</h2></div><div class="briefing-list"><div><b>✦ TWO WEAPON SYSTEMS</b><span>Rapid-fire energy cannons and guided explosive missiles.</span></div><div><b>◎ COLLISIONS & MOMENTUM</b><span>Thrusters, inertial drift, ship impacts, asteroid fields and solar hazards.</span></div><div><b>✶ DESTROY EVERY WORLD</b><span>Planet hulls can be worn down. When shattered, physical chunks scatter through the arena.</span></div><div><b>◇ LAST SHIP STANDING</b><span>No respawns during a round. Use the planets as cover—or destroy the cover entirely.</span></div></div></section>
+  </div>
+  <div class="launch-row"><button id="launch-btn">▶ LAUNCH SKIRMISH <span>ENGAGE</span></button><span id="engine-status">INITIALIZING 3D ENGINE…</span></div>
+  <div class="menu-foot">ORIGINAL SPACE COMBAT SANDBOX · PLAYCANVAS ENGINE 2.23.3 · DESIGNED FOR GITHUB PAGES</div>
+ </div>
+</div>
+<div class="overlay" id="pause-screen" hidden><div class="overlay-card"><div class="overline">ATHENA COMBAT COMMAND</div><h2>GAME PAUSED</h2><p>Weapons cold. Flight controls suspended.</p><button id="resume-btn">▶ RETURN TO BATTLE</button><button id="pause-menu-btn" class="secondary-btn">✕ END ENGAGEMENT</button></div></div>
+<div class="overlay" id="result-screen" hidden><div class="overlay-card"><div class="overline">MATCH COMPLETE / FINAL TRANSMISSION</div><h2 id="result-title">TEAM AZURE WINS</h2><p id="result-subtitle">Last team standing.</p><div class="result-grid" id="result-stats"></div><button id="rematch-btn">↻ RETURN TO HANGAR</button></div></div>
+<div id="boot-error" hidden></div>
+<script type="module" src="src/main.js"></script>
+<script>setTimeout(()=>{if(!window.HELIOS_READY){let el=document.getElementById("engine-status");if(el)el.textContent="ENGINE STILL LOADING / CHECK CONNECTION TO CDN";}},14000)</script>
+</body></html>
